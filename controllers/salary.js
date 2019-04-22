@@ -37,7 +37,9 @@ module.exports = {
   },
   store: (req, res) => {
     if (req.user.role == "admin") {
-      Salary.create({ ...req.body })
+      let newSalary = {...req.body}
+      newSalary.user = req.user._id
+      Salary.create(newSalary)
         .then(salary => res.json(salary))
         .catch(err => console.log(err));
     } else {
