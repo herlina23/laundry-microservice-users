@@ -13,7 +13,7 @@ const salarySchema = mongoose.Schema({
   },
 
   employee: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true
   },
