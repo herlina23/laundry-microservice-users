@@ -1,5 +1,6 @@
 const Salary = require("../models/Salary");
 const User = require("../models/User");
+const axios = require("axios");
 
 module.exports = {
   index: (req, res) => {
@@ -37,8 +38,8 @@ module.exports = {
   },
   store: (req, res) => {
     if (req.user.role == "admin") {
-      let newSalary = {...req.body}
-      newSalary.user = req.user._id
+      let newSalary = { ...req.body };
+      newSalary.user = req.user._id;
       Salary.create(newSalary)
         .then(salary => res.json(salary))
         .catch(err => console.log(err));
