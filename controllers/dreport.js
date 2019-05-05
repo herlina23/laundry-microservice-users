@@ -1,5 +1,10 @@
 const Salary = require("../models/Salary");
 const User = require("../models/User");
+const Item = require("../models/Item");
+const Itemin = require("../models/Itemin");
+const Itemout = require("../models/Itemout");
+const Outcome = require("../models/Outcome");
+const Outcomein = require("../models/Outcomein");
 const axios = require("axios");
 
 module.exports = {
@@ -12,5 +17,51 @@ module.exports = {
     } else {
       res.sendStatus(403);
     }
+  },
+  showItemin: (req, res) => {
+    if (req.user.role == "admin") {
+      Itemin.find()
+        .populate("item")
+        .then(dreport => res.json(dreport))
+        .catch(err => console.log(err));
+    } else {
+      res.sendStatus(403);
+    }
+  },
+  showItemout: (req, res) => {
+    if (req.user.role == "admin") {
+      Itemout.find()
+        .populate("item")
+        .then(dreport => res.json(dreport))
+        .catch(err => console.log(err));
+    } else {
+      res.sendStatus(403);
+    }
+  },
+  showOutcome: (req, res) => {
+    if (req.user.role == "admin") {
+      Outcome.find()
+        .populate("outcomein")
+        .then(dreport => res.json(dreport))
+        .catch(err => console.log(err));
+    } else {
+      res.sendStatus(403);
+    }
+  },
+  showTransaction: (req, res) => {
+    Transaction.find()
+      .populate("user")
+      .populate("member")
+      .populate("status")
+      .then(dreport => res.json(dreport))
+      .catch(err => console.log(err));
+  },
+  showDetail: (req, res) => {
+    Detail.find({ transaction: req.params.id_trans })
+      .populate("transaction")
+      .populate("service")
+      .populate("process")
+      .then(dreport => res.json(dreport))
+      .catch(err => console.log(err));
   }
 };
