@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const axios = require("axios");
 
 module.exports = {
   index: (req, res) => {
@@ -32,7 +33,8 @@ module.exports = {
                   if (err) {
                     res.sendStatus(403);
                   }
-                  res.json({ token });
+                  // res.json({ token });
+                  res.json({ token, user });
                 }
               );
             } else {

@@ -1,5 +1,6 @@
 const Salary = require("../models/Salary");
 const User = require("../models/User");
+const axios = require("axios");
 
 module.exports = {
   index: (req, res) => {
