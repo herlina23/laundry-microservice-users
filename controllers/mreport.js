@@ -77,7 +77,7 @@ module.exports = {
         let dateNow = new Date();
         itemins.forEach(item => {
           if (item.month === dateNow.getMonth()) {
-            responseObject.pengeluaran = item.bayar_barang;
+            responseObject.pengeluaran.item = item.bayar_barang;
           }
         });
         return Salary([
@@ -109,7 +109,7 @@ module.exports = {
         let dateNow = new Date();
         salaries.forEach(salary => {
           if (salary.month === dateNow.getMonth()) {
-            responseObject.pengeluaran = salary.paysalary;
+            responseObject.pengeluaran.salary = salary.paysalary;
           }
         });
         return Outcome([
@@ -141,7 +141,7 @@ module.exports = {
         let dateNow = new Date();
         outcomes.forEach(transact => {
           if (outcome.month === dateNow.getMonth()) {
-            responseObject.pengeluaran = outcome.paybill;
+            responseObject.pengeluaran.outcome = outcome.paybill;
           }
         });
         return res.json(responseObject);
