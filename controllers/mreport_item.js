@@ -54,8 +54,8 @@ module.exports = {
                 },
                 "year(dateIn)": {
                   $year: "$create_date"
-                }
-                // item: "$item"
+                },
+                item: "$item"
               },
               "SUM(price)": {
                 $sum: "$price"
@@ -64,7 +64,7 @@ module.exports = {
           },
           {
             $project: {
-              // item: "$_id.item",
+              item: "$_id.item",
               year: "$_id.year(create_date)",
               month: "$_id.month(create_date)",
               bayar_barang: "$SUM(price)"
@@ -89,7 +89,8 @@ module.exports = {
                 },
                 "year(date)": {
                   $year: "$date"
-                }
+                },
+                employee: "$employee"
               },
               "SUM(total)": {
                 $sum: "$total"
@@ -98,6 +99,7 @@ module.exports = {
           },
           {
             $project: {
+              employee: "$_id.employee",
               year: "$_id.year(date)",
               month: "$_id.month(date)",
               paysalary: "$SUM(total)"
@@ -121,7 +123,8 @@ module.exports = {
                 },
                 "year(date)": {
                   $year: "$date"
-                }
+                },
+                outcomein: "$outcomein"
               },
               "SUM(total)": {
                 $sum: "$total"
@@ -130,6 +133,7 @@ module.exports = {
           },
           {
             $project: {
+              outcomein: "$_id.outcomein",
               year: "$_id.year(date)",
               month: "$_id.month(date)",
               paybill: "$SUM(total)"
