@@ -9,6 +9,7 @@ const Transaction = require("../models/Transaction");
 
 module.exports = {
   index: (req, res) => {
+    let dateNow = new Date();
     let responseObject;
     // Transaction.find()
     Transaction.aggregate([
@@ -50,13 +51,8 @@ module.exports = {
       .then(transactions => {
         //kita dapet hasil dari query sesuai di link tadi
         //kita filter yg bulan sekarang
-        let dateNow = new Date();
-        transactions.forEach(transact => {
-          if (transact.month === dateNow.getMonth()) {
-            //ngisi pemasukan sesuai totalPay yg bulan sekarang
-            responseObject.pemasukan = transact.totalPay;
-          }
-        });
+        responseObject.pemasukan = transactions[0].totalPay;
+
         return Itemin.aggregate([
           {
             $addFields: {
@@ -68,10 +64,10 @@ module.exports = {
           {
             $group: {
               _id: {
-                "month(dateIn)": {
+                "month(create_date)": {
                   $month: "$create_date"
                 },
-                "year(dateIn)": {
+                "year(create_date)": {
                   $year: "$create_date"
                 }
                 // item: "$item"
@@ -98,12 +94,7 @@ module.exports = {
       })
 
       .then(itemins => {
-        let dateNow = new Date();
-        itemins.forEach(item => {
-          if (item.month === dateNow.getMonth()) {
-            responseObject.pengeluaran.item = item.bayar_barang;
-          }
-        });
+        responseObject.pengeluaran.items = itemins;
         return Salary([
           {
             $addFields: {
@@ -142,12 +133,7 @@ module.exports = {
         ]);
       })
       .then(salaries => {
-        let dateNow = new Date();
-        salaries.forEach(salary => {
-          if (salary.month === dateNow.getMonth()) {
-            responseObject.pengeluaran.salary = salary.paysalary;
-          }
-        });
+        responseObject.pengeluaran.salaries = salaries;
         return Outcome([
           {
             $addFields: {
@@ -186,12 +172,7 @@ module.exports = {
         ]);
       })
       .then(outcomes => {
-        let dateNow = new Date();
-        outcomes.forEach(transact => {
-          if (outcome.month === dateNow.getMonth()) {
-            responseObject.pengeluaran.outcome = outcome.paybill;
-          }
-        });
+        responseObject.pengeluaran.outcomes = outcomes;
         return res.json(responseObject);
       });
   }
