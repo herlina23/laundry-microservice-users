@@ -42,7 +42,7 @@ module.exports = {
         transactions.forEach(transact => {
           if (transact.month === dateNow.getMonth()) {
             //ngisi pemasukan sesuai totalPay yg bulan sekarang
-            objectResponse.pemasukan = transact.totalPay;
+            responseObject.pemasukan = transact.totalPay;
           }
         });
         return Itemin.aggregate([
@@ -77,7 +77,7 @@ module.exports = {
         let dateNow = new Date();
         itemins.forEach(item => {
           if (item.month === dateNow.getMonth()) {
-            objectResponse.pengeluaran = item.bayar_barang;
+            responseObject.pengeluaran = item.bayar_barang;
           }
         });
         return Salary([
@@ -109,7 +109,7 @@ module.exports = {
         let dateNow = new Date();
         salaries.forEach(salary => {
           if (salary.month === dateNow.getMonth()) {
-            objectResponse.pengeluaran = salary.paysalary;
+            responseObject.pengeluaran = salary.paysalary;
           }
         });
         return Outcome([
@@ -141,18 +141,10 @@ module.exports = {
         let dateNow = new Date();
         outcomes.forEach(transact => {
           if (outcome.month === dateNow.getMonth()) {
-            objectResponse.pengeluaran = outcome.paybill;
+            responseObject.pengeluaran = outcome.paybill;
           }
         });
         return res.json(responseObject);
       });
-
-    // .then(salaries => {
-    //   return Itemin.find();
-    // })
-
-    // .then(itemins => {
-    //   return res.json(responseObject);
-    // });
   }
 };
