@@ -13,6 +13,13 @@ module.exports = {
     // Transaction.find()
     Transaction.aggregate([
       {
+        $addFields: {
+          "month(dateIn)": {
+            $month: "$dateIn"
+          }
+        }
+      },
+      {
         $group: {
           _id: {
             "month(dateIn)": {
@@ -33,6 +40,11 @@ module.exports = {
           month: "$_id.month(dateIn)",
           totalPay: "$SUM(grandTotal)"
         }
+      },
+      {
+        $match: {
+          month: 5
+        }
       }
     ])
       .then(transactions => {
@@ -46,6 +58,13 @@ module.exports = {
           }
         });
         return Itemin.aggregate([
+          {
+            $addFields: {
+              month: {
+                $month: "$create_date"
+              }
+            }
+          },
           {
             $group: {
               _id: {
@@ -69,6 +88,11 @@ module.exports = {
               month: "$_id.month(create_date)",
               bayar_barang: "$SUM(price)"
             }
+          },
+          {
+            $match: {
+              month: 5
+            }
           }
         ]);
       })
@@ -81,6 +105,13 @@ module.exports = {
           }
         });
         return Salary([
+          {
+            $addFields: {
+              month: {
+                $month: "$date"
+              }
+            }
+          },
           {
             $group: {
               _id: {
@@ -104,6 +135,11 @@ module.exports = {
               month: "$_id.month(date)",
               paysalary: "$SUM(total)"
             }
+          },
+          {
+            $match: {
+              month: 5
+            }
           }
         ]);
       })
@@ -115,6 +151,13 @@ module.exports = {
           }
         });
         return Outcome([
+          {
+            $addFields: {
+              month: {
+                $month: "$date"
+              }
+            }
+          },
           {
             $group: {
               _id: {
@@ -137,6 +180,11 @@ module.exports = {
               year: "$_id.year(date)",
               month: "$_id.month(date)",
               paybill: "$SUM(total)"
+            }
+          },
+          {
+            $match: {
+              month: 5
             }
           }
         ]);
