@@ -9,7 +9,7 @@ const {
   showItemout,
   showOutcome,
   showTransaction
-} = require("../controllers/mreport");
+} = require("../controllers/dreport");
 
 router.use(verifyToken);
 router.get("/showSalary/", showSalary);

@@ -10,7 +10,14 @@ const Transaction = require("../models/Transaction");
 module.exports = {
   index: (req, res) => {
     let dateNow = new Date();
-    let responseObject;
+    let responseObject = {
+      pemasukan: 0,
+      pengeluaran: {
+        salaries: [],
+        items: [],
+        outcomes: []
+      }
+    };
     // Transaction.find()
     Transaction.aggregate([
       {
@@ -44,7 +51,8 @@ module.exports = {
       },
       {
         $match: {
-          month: 5
+          // month: 5
+          month: dateNow.getMonth()+1
         }
       }
     ])
@@ -87,7 +95,8 @@ module.exports = {
           },
           {
             $match: {
-              month: 5
+              // month: 5
+              month: dateNow.getMonth()+1
             }
           }
         ]);
@@ -127,7 +136,8 @@ module.exports = {
           },
           {
             $match: {
-              month: 5
+              // month: 5
+              month: dateNow.getMonth()+1
             }
           }
         ]);
@@ -166,7 +176,8 @@ module.exports = {
           },
           {
             $match: {
-              month: 5
+              // month: 5
+              month: dateNow.getMonth()+1
             }
           }
         ]);
