@@ -8,8 +8,7 @@ const userSchema = mongoose.Schema({
     required: true
   },
   name: {
-    type: String,
-    unique: true
+    type: String
   },
 
   role: {

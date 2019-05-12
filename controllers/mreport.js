@@ -52,7 +52,7 @@ module.exports = {
       {
         $match: {
           // month: 5
-          month: dateNow.getMonth()+1
+          month: dateNow.getMonth() + 1
         }
       }
     ])
@@ -96,7 +96,7 @@ module.exports = {
           {
             $match: {
               // month: 5
-              month: dateNow.getMonth()+1
+              month: dateNow.getMonth() + 1
             }
           }
         ]);
@@ -105,7 +105,7 @@ module.exports = {
       .then(itemins => {
         responseObject.pengeluaran.items = itemins;
         return Salary([
-          {
+          ({
             $addFields: {
               month: {
                 $month: "$date"
@@ -131,21 +131,20 @@ module.exports = {
             $project: {
               year: "$_id.year(date)",
               month: "$_id.month(date)",
-              paysalary: "$SUM(total)"
+              " paysalary": "$SUM(total)"
             }
           },
           {
             $match: {
-              // month: 5
-              month: dateNow.getMonth()+1
+              month: dateNow.getMonth() + 1
             }
-          }
+          })
         ]);
       })
       .then(salaries => {
         responseObject.pengeluaran.salaries = salaries;
         return Outcome([
-          {
+          ({
             $addFields: {
               month: {
                 $month: "$date"
@@ -171,15 +170,14 @@ module.exports = {
             $project: {
               year: "$_id.year(date)",
               month: "$_id.month(date)",
-              paybill: "$SUM(total)"
+              " paysalary": "$SUM(total)"
             }
           },
           {
             $match: {
-              // month: 5
-              month: dateNow.getMonth()+1
+              month: dateNow.getMonth() + 1
             }
-          }
+          })
         ]);
       })
       .then(outcomes => {
