@@ -12,11 +12,11 @@ const salarySchema = mongoose.Schema({
     required: true
   },
 
-  employee: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true
-  },
+  // employee: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "User",
+  //   required: true
+  // },
   total: {
     type: Number,
     required: true
