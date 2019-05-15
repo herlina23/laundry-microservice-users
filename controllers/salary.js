@@ -4,7 +4,7 @@ const axios = require("axios");
 
 module.exports = {
   index: (req, res) => {
-    if (req.user.role == "admin") {
+    if (req.user.role == "admin" || req.user.role == "kasir") {
       Salary.find()
         .populate("user")
         .then(salary => res.json(salary))
@@ -14,7 +14,7 @@ module.exports = {
     }
   },
   show: (req, res) => {
-    if (req.user.role == "admin") {
+    if (req.user.role == "admin" || req.user.role == "kasir") {
       Salary.findById(req.params.id)
         .populate("user")
         .then(salary => res.json(salary))
@@ -24,7 +24,7 @@ module.exports = {
     }
   },
   update: (req, res) => {
-    if (req.user.role == "admin") {
+    if (req.user.role == "admin" || req.user.role == "kasir") {
       Salary.findOneAndUpdate(
         { _id: req.params.id },
         { $set: req.body },
@@ -37,10 +37,8 @@ module.exports = {
     }
   },
   store: (req, res) => {
-    if (req.user.role == "admin") {
-      let newSalary = { ...req.body };
-      newSalary.user = req.user._id;
-      Salary.create(newSalary)
+    if (req.user.role == "admin" || req.user.role == "kasir") {
+      Salary.create({ ...req.body })
         .then(salary => res.json(salary))
         .catch(err => console.log(err));
     } else {
@@ -48,7 +46,7 @@ module.exports = {
     }
   },
   destroy: (req, res) => {
-    if (req.user.role == "admin") {
+    if (req.user.role == "admin" || req.user.role == "kasir") {
       Salary.findOneAndDelete({ _id: req.params.id })
         .then(salary => res.json(salary))
         .catch(err => console.log(err));

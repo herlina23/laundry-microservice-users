@@ -1,25 +1,19 @@
 const mongoose = require("mongoose");
 
-// Salary Schema
+// Itemout Schema
 const salarySchema = mongoose.Schema({
-  date: {
-    type: Date,
-    default: Date.now()
-  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true
   },
-
-  // employee: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "User",
-  //   required: true
-  // },
   total: {
     type: Number,
     required: true
+  },
+  create_date: {
+    type: Date,
+    default: Date.now()
   }
 });
 
