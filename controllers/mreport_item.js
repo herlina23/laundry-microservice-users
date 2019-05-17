@@ -9,7 +9,15 @@ const Transaction = require("../models/Transaction");
 
 module.exports = {
   index: (req, res) => {
-    let responseObject;
+    // let responseObject;
+    let responseObject = {
+      pemasukan: 0,
+      pengeluaran: {
+        salaries: [],
+        items: [],
+        outcomes: []
+      }
+    };
     let dateNow = new Date();
     // Transaction.find()
     Transaction.aggregate([
@@ -64,10 +72,10 @@ module.exports = {
           {
             $group: {
               _id: {
-                "month(dateIn)": {
+                "month(create_date)": {
                   $month: "$create_date"
                 },
-                "year(dateIn)": {
+                "year(create_date)": {
                   $year: "$create_date"
                 },
                 item: "$item"
@@ -87,19 +95,19 @@ module.exports = {
           },
           {
             $match: {
+              // month: 5
               month: dateNow.getMonth() + 1
             }
           }
         ]);
       })
-
       .then(itemins => {
         responseObject.pengeluaran.items = itemins;
-        return Salary([
+        return Salary.aggregate([
           {
             $addFields: {
               month: {
-                $month: "$date"
+                $month: "$create_date"
               }
             }
           },
@@ -107,12 +115,12 @@ module.exports = {
             $group: {
               _id: {
                 "month(date)": {
-                  $month: "$date"
+                  $month: "$create_date"
                 },
                 "year(date)": {
-                  $year: "$date"
+                  $year: "$create_date"
                 },
-                employee: "$employee"
+                user: "$user"
               },
               "SUM(total)": {
                 $sum: "$total"
@@ -121,7 +129,7 @@ module.exports = {
           },
           {
             $project: {
-              employee: "$_id.employee",
+              user: "$_id.user",
               year: "$_id.year(date)",
               month: "$_id.month(date)",
               paysalary: "$SUM(total)"
@@ -136,7 +144,7 @@ module.exports = {
       })
       .then(salaries => {
         responseObject.pengeluaran.salaries = salaries;
-        return Outcome([
+        return Outcome.aggregate([
           {
             $addFields: {
               month: {

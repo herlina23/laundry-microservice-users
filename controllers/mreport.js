@@ -104,11 +104,11 @@ module.exports = {
 
       .then(itemins => {
         responseObject.pengeluaran.items = itemins;
-        return Salary([
-          ({
+        return Salary.aggregate([
+          {
             $addFields: {
               month: {
-                $month: "$date"
+                $month: "$create_date"
               }
             }
           },
@@ -116,10 +116,10 @@ module.exports = {
             $group: {
               _id: {
                 "month(date)": {
-                  $month: "$date"
+                  $month: "$create_date"
                 },
                 "year(date)": {
-                  $year: "$date"
+                  $year: "$create_date"
                 }
               },
               "SUM(total)": {
@@ -131,20 +131,20 @@ module.exports = {
             $project: {
               year: "$_id.year(date)",
               month: "$_id.month(date)",
-              " paysalary": "$SUM(total)"
+              paysalary: "$SUM(total)"
             }
           },
           {
             $match: {
               month: dateNow.getMonth() + 1
             }
-          })
+          }
         ]);
       })
       .then(salaries => {
         responseObject.pengeluaran.salaries = salaries;
-        return Outcome([
-          ({
+        return Outcome.aggregate([
+          {
             $addFields: {
               month: {
                 $month: "$date"
@@ -170,14 +170,14 @@ module.exports = {
             $project: {
               year: "$_id.year(date)",
               month: "$_id.month(date)",
-              " paysalary": "$SUM(total)"
+              paysalary: "$SUM(total)"
             }
           },
           {
             $match: {
               month: dateNow.getMonth() + 1
             }
-          })
+          }
         ]);
       })
       .then(outcomes => {

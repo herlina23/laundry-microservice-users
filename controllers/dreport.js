@@ -5,63 +5,69 @@ const Itemin = require("../models/Itemin");
 const Itemout = require("../models/Itemout");
 const Outcome = require("../models/Outcome");
 const Outcomein = require("../models/Outcomein");
-const axios = require("axios");
+const Transaction = require("../models/Transaction");
 
 module.exports = {
-  showSalary: (req, res) => {
-    if (req.user.role == "admin") {
-      Salary.find()
-        .populate("user")
-        .then(dreport => res.json(dreport))
-        .catch(err => console.log(err));
-    } else {
-      res.sendStatus(403);
-    }
-  },
-  showItemin: (req, res) => {
-    if (req.user.role == "admin") {
-      Itemin.find()
-        .populate("item")
-        .then(dreport => res.json(dreport))
-        .catch(err => console.log(err));
-    } else {
-      res.sendStatus(403);
-    }
-  },
-  showItemout: (req, res) => {
-    if (req.user.role == "admin") {
-      Itemout.find()
-        .populate("item")
-        .then(dreport => res.json(dreport))
-        .catch(err => console.log(err));
-    } else {
-      res.sendStatus(403);
-    }
-  },
-  showOutcome: (req, res) => {
-    if (req.user.role == "admin") {
-      Outcome.find()
-        .populate("outcomein")
-        .then(dreport => res.json(dreport))
-        .catch(err => console.log(err));
-    } else {
-      res.sendStatus(403);
-    }
-  },
-  showTransaction: (req, res) => {
-    Transaction.find()
-      .populate("user")
-      .populate("member")
-      .populate("status")
-      .then(dreport => res.json(dreport))
-      .catch(err => console.log(err));
-  },
-  showDetail: (req, res) => {
-    Detail.find({ transaction: req.params.id_trans })
-      .populate("transaction")
-      .populate("service")
-      .populate("process")
-      .then(dreport => res.json(dreport))
-      .catch(err => console.log(err));
+  index: (req, res) => {
+    // let responseObject;
+    a = datetime.datetime(2019, 5, 8);
+    b = datetime.datetime(2019, 5, 10);
+    let responseObject = {
+      pemasukan: 0,
+      pengeluaran: {
+        salaries: [],
+        items: [],
+        outcomes: []
+      }
+    };
+    let dateNow = new Date();
+    // Transaction.find()
+    Transaction.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              dateIn: {
+                $gte: a
+              }
+            },
+            {
+              dateIn: {
+                $lte: b
+              }
+            }
+          ]
+        }
+      },
+      {
+        $group: {
+          _id: {
+            "month(dateIn)": {
+              $month: "$dateIn"
+            },
+            "year(dateIn)": {
+              $year: "$dateIn"
+            },
+            "dayOfMonth(dateIn)": {
+              $dayOfMonth: "$dateIn"
+            }
+          },
+          "SUM(grandTotal)": {
+            $sum: "$grandTotal"
+          }
+        }
+      },
+      {
+        $project: {
+          dayOfMonth: "$_id.dayOfMonth(dateIn)",
+          year: "$_id.year(dateIn)",
+          month: "$_id.month(dateIn)",
+          totalPay: "$SUM(grandTotal)"
+        }
+      }
+    ]).then(transactions => {
+      responseObject.pemasukan = transactions[0].totalPay;
+      return res.json(responseObject);
+    });
   }
 };
