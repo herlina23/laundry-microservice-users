@@ -75,9 +75,12 @@ module.exports = {
   searchByInvoice: (req, res) => {
     Transaction.findOne({ invoice: req.params.invoice })
       .then(transaction => {
-        Detail.find({ transaction: transaction._id });
-
         return Detail.aggregate([
+          {
+            $match: {
+              transaction: transaction._id
+            }
+          },
           {
             $lookup: {
               from: "processes",
