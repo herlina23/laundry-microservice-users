@@ -10,8 +10,10 @@ const Transaction = require("../models/Transaction");
 module.exports = {
   index: (req, res) => {
     // let responseObject;
-    a = datetime.datetime(2019, 5, 8);
-    b = datetime.datetime(2019, 5, 10);
+    let { dateIn, dateOut } = req.body
+    dateIn = new Date(dateIn);
+    dateOut = new Date(dateOut);
+    dateOut.setDate(dateOut.getDate() + 1)
     let responseObject = {
       pemasukan: 0,
       pengeluaran: {
@@ -20,20 +22,18 @@ module.exports = {
         outcomes: []
       }
     };
-    let dateNow = new Date();
-    // Transaction.find()
     Transaction.aggregate([
       {
-        $match: {
-          $and: [
+        '$match': {
+          '$and': [
             {
-              dateIn: {
-                $gte: a
+              'dateIn': {
+                '$gte': dateIn
               }
             },
             {
-              dateIn: {
-                $lte: b
+              'dateIn': {
+                '$lte': dateOut
               }
             }
           ]
@@ -66,8 +66,57 @@ module.exports = {
         }
       }
     ]).then(transactions => {
-      responseObject.pemasukan = transactions[0].totalPay;
-      return res.json(responseObject);
-    });
+        responseObject.pemasukan = transactions[0].totalPay;
+        res.json(responseObject)
+        // return Itemin.aggregate([
+        //   {
+        //     '$match': {
+        //       '$and': [
+        //         {
+        //           'create_date': {
+        //             '$gte': dateIn
+        //           }
+        //         },
+        //         {
+        //           'create_date': {
+        //             '$lte': dateOut
+        //           }
+        //         }
+        //       ]
+        //     }
+        //   },
+        //   {
+        //     $group: {
+        //       _id: {
+        //         "month(create_date)": {
+        //           $month: "$create_date"
+        //         },
+        //         "year(create_date)": {
+        //           $year: "$create_date"
+        //         },
+        //         "dayOfMonth(create_date)": {
+        //           $dayOfMonth: "$create_date"
+        //         }
+        //         // item: "$item"
+        //       },
+        //       "SUM(price)": {
+        //         $sum: "$price"
+        //       }
+        //     }
+        //   },
+        //   {
+        //     $project: {
+        //       // item: "$_id.item",
+        //       dayOfMonth: "$_id.dayOfMonth(create_date)",
+        //       year: "$_id.year(create_date)",
+        //       month: "$_id.month(create_date)",
+        //       bayar_barang: "$SUM(price)"
+        //     }
+        //   }
+        // ])
+    })
+      // .then(itemins => {
+      //   console.log(itemins, responseObject)
+      // })
   }
 };

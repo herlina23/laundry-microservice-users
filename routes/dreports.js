@@ -5,6 +5,6 @@ const router = express.Router();
 const { index } = require("../controllers/dreport");
 
 router.use(verifyToken);
-router.get("/", index);
+router.post("/", index);
 
 module.exports = router;
