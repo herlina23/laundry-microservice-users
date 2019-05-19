@@ -18,7 +18,11 @@ module.exports = {
                 items: [],
                 outcomes: []
             },
-            laba: 0
+            laba: 0,
+      keluar: 0,
+      keluarItem: 0,
+      keluarSalary: 0,
+      KeluarOutcome: 0
         };
         // Transaction.find()
         Transaction.aggregate([
@@ -134,6 +138,21 @@ module.exports = {
             })
             .then(outcomes => {
                 responseObject.pengeluaran.outcomes = outcomes;
+            
+            responseObject.keluarItem =
+          responseObject.pengeluaran.items[0].bayar_barang;
+
+        responseObject.KeluarOutcome =
+          responseObject.pengeluaran.outcomes[0].paysalary;
+
+        responseObject.keluarSalary =
+          responseObject.pengeluaran.salaries[0].paysalary;
+
+        responseObject.keluar =
+          responseObject.pengeluaran.items[0].bayar_barang +
+          responseObject.pengeluaran.outcomes[0].paysalary +
+          responseObject.pengeluaran.salaries[0].paysalary;
+
 
                 // cara menghitung labanya gimana ? (pemasukan - pengeluaran), tapi kenapa hasil laba:null ?
                 responseObject.laba =
