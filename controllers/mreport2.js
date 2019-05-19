@@ -9,37 +9,19 @@ const Transaction = require("../models/Transaction");
 
 module.exports = {
   index: (req, res) => {
-    let { dateIn, dateOut } = req.body;
-    dateIn = new Date(dateIn);
-    dateOut = new Date(dateOut);
-    dateOut.setDate(dateOut.getDate() + 1);
+    let dateNow = new Date();
     let responseObject = {
       pemasukan: 0,
+
       pengeluaran: {
         salaries: [],
         items: [],
         outcomes: []
-      }
-    };
-
-    Transaction.aggregate([
-      {
-        $match: {
-          $and: [
-            {
-              dateIn: {
-                $gte: dateIn
-              }
-            },
-            {
-              dateIn: {
-                $lte: dateOut
-              }
-            }
-          ]
-        }
       },
-
+      laba: 0
+    };
+    // Transaction.find()
+    Transaction.aggregate([
       {
         $group: {
           _id: {
@@ -48,9 +30,6 @@ module.exports = {
             },
             "year(dateIn)": {
               $year: "$dateIn"
-            },
-            "dayOfMonth(dateIn)": {
-              $dayOfMonth: "$dateIn"
             }
           },
           "SUM(grandTotal)": {
@@ -62,7 +41,6 @@ module.exports = {
         $project: {
           year: "$_id.year(dateIn)",
           month: "$_id.month(dateIn)",
-          dayOfMonth: "$_id.dayOfMonth(dateIn)",
           totalPay: "$SUM(grandTotal)"
         }
       }
@@ -70,26 +48,9 @@ module.exports = {
       .then(transactions => {
         //kita dapet hasil dari query sesuai di link tadi
         //kita filter yg bulan sekarang
-
         responseObject.pemasukan = transactions[0].totalPay;
-        return Itemin.aggregate([
-          {
-            $match: {
-              $and: [
-                {
-                  create_date: {
-                    $gte: dateIn
-                  }
-                },
-                {
-                  create_date: {
-                    $lte: dateOut
-                  }
-                }
-              ]
-            }
-          },
 
+        return Itemin.aggregate([
           {
             $group: {
               _id: {
@@ -98,11 +59,8 @@ module.exports = {
                 },
                 "year(create_date)": {
                   $year: "$create_date"
-                },
-                "dayOfMonth(create_date)": {
-                  $dayOfMonth: "$create_date"
-                },
-                item: "$item"
+                }
+                // item: "$item"
               },
               "SUM(price)": {
                 $sum: "$price"
@@ -111,48 +69,27 @@ module.exports = {
           },
           {
             $project: {
+              // item: "$_id.item",
               year: "$_id.year(create_date)",
               month: "$_id.month(create_date)",
-              dayOfMonth: "$_id.dayOfMonth(create_date)",
-              user: "$_id.item",
-              totalBuy: "$SUM(price)"
+              bayar_barang: "$SUM(price)"
             }
           }
         ]);
       })
+
       .then(itemins => {
         responseObject.pengeluaran.items = itemins;
         return Salary.aggregate([
           {
-            $match: {
-              $and: [
-                {
-                  create_date: {
-                    $gte: dateIn
-                  }
-                },
-                {
-                  create_date: {
-                    $lte: dateOut
-                  }
-                }
-              ]
-            }
-          },
-
-          {
             $group: {
               _id: {
-                "month(create_date)": {
+                "month(date)": {
                   $month: "$create_date"
                 },
-                "year(create_date)": {
+                "year(date)": {
                   $year: "$create_date"
-                },
-                "dayOfMonth(create_date)": {
-                  $dayOfMonth: "$create_date"
-                },
-                user: "$user"
+                }
               },
               "SUM(total)": {
                 $sum: "$total"
@@ -161,11 +98,9 @@ module.exports = {
           },
           {
             $project: {
-              year: "$_id.year(create_date)",
-              month: "$_id.month(create_date)",
-              dayOfMonth: "$_id.dayOfMonth(create_date)",
-              user: "$_id.user",
-              paySalary: "$SUM(total)"
+              year: "$_id.year(date)",
+              month: "$_id.month(date)",
+              paysalary: "$SUM(total)"
             }
           }
         ]);
@@ -174,22 +109,6 @@ module.exports = {
         responseObject.pengeluaran.salaries = salaries;
         return Outcome.aggregate([
           {
-            $match: {
-              $and: [
-                {
-                  date: {
-                    $gte: dateIn
-                  }
-                },
-                {
-                  date: {
-                    $lte: dateOut
-                  }
-                }
-              ]
-            }
-          },
-          {
             $group: {
               _id: {
                 "month(date)": {
@@ -197,11 +116,7 @@ module.exports = {
                 },
                 "year(date)": {
                   $year: "$date"
-                },
-                "dayOfMonth(date)": {
-                  $dayOfMonth: "$date"
-                },
-                outcomein: "$outcomein"
+                }
               },
               "SUM(total)": {
                 $sum: "$total"
@@ -210,17 +125,22 @@ module.exports = {
           },
           {
             $project: {
-              outcomein: "$_id.outcomein",
               year: "$_id.year(date)",
               month: "$_id.month(date)",
-              dayOfMont: "$_id.dayOfMonth(date)",
-              paybill: "$SUM(total)"
+              paysalary: "$SUM(total)"
             }
           }
         ]);
       })
       .then(outcomes => {
         responseObject.pengeluaran.outcomes = outcomes;
+
+        // cara menghitung labanya gimana ? (pemasukan - pengeluaran), tapi kenapa hasil laba:null ?
+        responseObject.laba =
+          responseObject.pemasukan -
+          (responseObject.pengeluaran.items.bayar_barang +
+            responseObject.pengeluaran.outcomes.paysalary +
+            responseObject.pengeluaran.salaries.paysalary);
         return res.json(responseObject);
       });
   }
