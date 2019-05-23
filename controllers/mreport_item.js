@@ -16,7 +16,10 @@ module.exports = {
         salaries: [],
         items: [],
         outcomes: []
-      }
+      },
+      keluarItem: [],
+      keluarSalary: [],
+      keluarOutcome: []
     };
     let dateNow = new Date();
     // Transaction.find()
@@ -185,6 +188,9 @@ module.exports = {
       })
       .then(outcomes => {
         responseObject.pengeluaran.outcomes = outcomes;
+       responseObject.keluarItem = responseObject.pengeluaran.items;
+        responseObject.keluarSalary = responseObject.pengeluaran.salaries;
+        responseObject.keluarOutcome = responseObject.pengeluaran.outcomes;
         return res.json(responseObject);
       });
 
