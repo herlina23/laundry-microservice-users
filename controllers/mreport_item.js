@@ -218,7 +218,11 @@ module.exports = {
   },
   keluarOutcome2: (req, res) => {
     // let dateNow = new Date();
-    const { m, y } = req.query;
+    let { m, y } = req.query;
+    m = parseInt(m);
+    y = parseInt(y);
+
+    // console.log(req.query);
     Outcome.aggregate([
       {
         $lookup: {
