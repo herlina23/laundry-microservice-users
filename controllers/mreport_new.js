@@ -9,7 +9,9 @@ const Transaction = require("../models/Transaction");
 
 module.exports = {
   index: (req, res) => {
-    let dateNow = new Date();
+    let { m, y } = req.query;
+    m = parseInt(m);
+    y = parseInt(y);
     let responseObject = {
       pemasukan: 0,
 
@@ -28,6 +30,12 @@ module.exports = {
     };
     // Transaction.find()
     Transaction.aggregate([
+      {
+        $match: {
+          month: m,
+          year: y
+        }
+      },
       {
         $group: {
           _id: {
@@ -57,6 +65,12 @@ module.exports = {
         responseObject.pemasukan = transactions[0].totalPay;
 
         return Itemin.aggregate([
+          {
+            $match: {
+              month: m,
+              year: y
+            }
+          },
           {
             $group: {
               _id: {
@@ -88,6 +102,12 @@ module.exports = {
         responseObject.pengeluaran.items = itemins;
         return Salary.aggregate([
           {
+            $match: {
+              month: m,
+              year: y
+            }
+          },
+          {
             $group: {
               _id: {
                 "month(date)": {
@@ -115,6 +135,12 @@ module.exports = {
         responseObject.pengeluaran.salaries = salaries;
         return Outcome.aggregate([
           {
+            $match: {
+              month: m,
+              year: y
+            }
+          },
+          {
             $group: {
               _id: {
                 "month(date)": {
@@ -140,6 +166,9 @@ module.exports = {
       })
       .then(outcomes => {
         responseObject.pengeluaran.outcomes = outcomes;
+
+        responseObject.bulan = responseObject.pengeluaran.outcomes[0].month;
+        responseObject.tahun = responseObject.pengeluaran.outcomes[0].year;
 
         responseObject.keluarItem =
           responseObject.pengeluaran.items[0].bayar_barang;
