@@ -216,9 +216,9 @@ module.exports = {
       }
     ]).then(outcomes => res.json(outcomes));
   },
-  keluarOutcome2: async (req, res) => {
-    let dateNow = new Date();
-    const { b } = req.query;
+  keluarOutcome2: (req, res) => {
+    // let dateNow = new Date();
+    const { m, y } = req.query;
     Outcome.aggregate([
       {
         $lookup: {
@@ -264,7 +264,8 @@ module.exports = {
       },
       {
         $match: {
-          month: b
+          month: m,
+          year: y
         }
       }
     ]).then(outcomes => res.json(outcomes));
