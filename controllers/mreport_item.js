@@ -60,6 +60,17 @@ module.exports = {
 
     Itemin.aggregate([
       {
+        $lookup: {
+          from: "items",
+          localField: "item",
+          foreignField: "_id",
+          as: "item"
+        }
+      },
+      {
+        $unwind: "$item"
+      },
+      {
         $addFields: {
           month: {
             $month: "$create_date"
@@ -84,7 +95,7 @@ module.exports = {
       },
       {
         $project: {
-          item: "$_id.item",
+          item: "$_id.item.item_name",
           year: "$_id.year(create_date)",
           month: "$_id.month(create_date)",
           bayar_barang: "$SUM(price)"
@@ -104,6 +115,17 @@ module.exports = {
     // };
     let dateNow = new Date();
     Salary.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      {
+        $unwind: "$user"
+      },
       {
         $addFields: {
           month: {
@@ -129,7 +151,7 @@ module.exports = {
       },
       {
         $project: {
-          user: "$_id.user",
+          user: "$_id.user.name",
           year: "$_id.year(date)",
           month: "$_id.month(date)",
           paysalary: "$SUM(total)"
@@ -145,6 +167,17 @@ module.exports = {
   keluarOutcome: (req, res) => {
     let dateNow = new Date();
     Outcome.aggregate([
+      {
+        $lookup: {
+          from: "outcomeins",
+          localField: "outcomein",
+          foreignField: "_id",
+          as: "outcomein"
+        }
+      },
+      {
+        $unwind: "$outcomein"
+      },
       {
         $addFields: {
           month: {
@@ -170,7 +203,7 @@ module.exports = {
       },
       {
         $project: {
-          outcomein: "$_id.outcomein",
+          outcomein: "$_id.outcomein.outcomein_name",
           year: "$_id.year(date)",
           month: "$_id.month(date)",
           paybill: "$SUM(total)"
@@ -179,6 +212,59 @@ module.exports = {
       {
         $match: {
           month: dateNow.getMonth() + 1
+        }
+      }
+    ]).then(outcomes => res.json(outcomes));
+  },
+  keluarOutcome2: async (req, res) => {
+    let dateNow = new Date();
+    const { b } = req.query;
+    Outcome.aggregate([
+      {
+        $lookup: {
+          from: "outcomeins",
+          localField: "outcomein",
+          foreignField: "_id",
+          as: "outcomein"
+        }
+      },
+      {
+        $unwind: "$outcomein"
+      },
+      {
+        $addFields: {
+          month: {
+            $month: "$date"
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            "month(date)": {
+              $month: "$date"
+            },
+            "year(date)": {
+              $year: "$date"
+            },
+            outcomein: "$outcomein"
+          },
+          "SUM(total)": {
+            $sum: "$total"
+          }
+        }
+      },
+      {
+        $project: {
+          outcomein: "$_id.outcomein.outcomein_name",
+          year: "$_id.year(date)",
+          month: "$_id.month(date)",
+          paybill: "$SUM(total)"
+        }
+      },
+      {
+        $match: {
+          month: b
         }
       }
     ]).then(outcomes => res.json(outcomes));
