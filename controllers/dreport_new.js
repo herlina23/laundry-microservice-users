@@ -62,10 +62,12 @@ module.exports = {
           totalPay: "$SUM(grandTotal)"
         }
       }
-    ]).then(transactions => {
-      responseObject.pemasukan = transactions[0].totalPay;
-      return res.json(responseObject);
-    });
+    ]);
+    // .then(transactions => {
+    //   responseObject.pemasukan = transactions[0].totalPay;
+    //   return res.json(responseObject);
+    // });
+    then(itemins => res.json(itemins));
   },
   keluarItem: (req, res) => {
     let { dateIn, dateOut } = req.query;
@@ -73,6 +75,22 @@ module.exports = {
     dateOut = new Date(dateOut);
     dateOut.setDate(dateOut.getDate() + 1);
     Itemin.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              create_date: {
+                $gte: dateIn
+              }
+            },
+            {
+              create_date: {
+                $lte: dateOut
+              }
+            }
+          ]
+        }
+      },
       {
         $lookup: {
           from: "items",
@@ -84,13 +102,7 @@ module.exports = {
       {
         $unwind: "$item"
       },
-      {
-        $addFields: {
-          month: {
-            $month: "$create_date"
-          }
-        }
-      },
+
       {
         $group: {
           _id: {
@@ -99,6 +111,9 @@ module.exports = {
             },
             "year(create_date)": {
               $year: "$create_date"
+            },
+            "dayOfMonth(create_date)": {
+              $dayOfMonth: "$create_date"
             },
             item: "$item"
           },
@@ -109,26 +124,11 @@ module.exports = {
       },
       {
         $project: {
-          item: "$_id.item.item_name",
           year: "$_id.year(create_date)",
           month: "$_id.month(create_date)",
-          bayar_barang: "$SUM(price)"
-        }
-      },
-      {
-        $match: {
-          $and: [
-            {
-              create_date: {
-                $gte: dateIn
-              }
-            },
-            {
-              create_date: {
-                $lte: dateOut
-              }
-            }
-          ]
+          dayOfMonth: "$_id.dayOfMonth(create_date)",
+          user: "$_id.item",
+          totalBuy: "$SUM(price)"
         }
       }
     ]).then(itemins => res.json(itemins));
@@ -140,48 +140,6 @@ module.exports = {
     dateOut.setDate(dateOut.getDate() + 1);
     Salary.aggregate([
       {
-        $lookup: {
-          from: "users",
-          localField: "user",
-          foreignField: "_id",
-          as: "user"
-        }
-      },
-      {
-        $unwind: "$user"
-      },
-      {
-        $addFields: {
-          month: {
-            $month: "$create_date"
-          }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            "month(date)": {
-              $month: "$create_date"
-            },
-            "year(date)": {
-              $year: "$create_date"
-            },
-            user: "$user"
-          },
-          "SUM(total)": {
-            $sum: "$total"
-          }
-        }
-      },
-      {
-        $project: {
-          user: "$_id.user.name",
-          year: "$_id.year(date)",
-          month: "$_id.month(date)",
-          paysalary: "$SUM(total)"
-        }
-      },
-      {
         $match: {
           $and: [
             {
@@ -195,6 +153,46 @@ module.exports = {
               }
             }
           ]
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      {
+        $unwind: "$user"
+      },
+
+      {
+        $group: {
+          _id: {
+            "month(create_date)": {
+              $month: "$create_date"
+            },
+            "year(create_date)": {
+              $year: "$create_date"
+            },
+            "dayOfMonth(create_date)": {
+              $dayOfMonth: "$create_date"
+            },
+            user: "$user"
+          },
+          "SUM(total)": {
+            $sum: "$total"
+          }
+        }
+      },
+      {
+        $project: {
+          year: "$_id.year(create_date)",
+          month: "$_id.month(create_date)",
+          dayOfMonth: "$_id.dayOfMonth(create_date)",
+          user: "$_id.user",
+          paySalary: "$SUM(total)"
         }
       }
     ]).then(salaries => res.json(salaries));
@@ -210,48 +208,6 @@ module.exports = {
     console.log(dateOut);
     Outcome.aggregate([
       {
-        $lookup: {
-          from: "outcomeins",
-          localField: "outcomein",
-          foreignField: "_id",
-          as: "outcomein"
-        }
-      },
-      {
-        $unwind: "$outcomein"
-      },
-      {
-        $addFields: {
-          month: {
-            $month: "$date"
-          }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            "month(date)": {
-              $month: "$date"
-            },
-            "year(date)": {
-              $year: "$date"
-            },
-            outcomein: "$outcomein"
-          },
-          "SUM(total)": {
-            $sum: "$total"
-          }
-        }
-      },
-      {
-        $project: {
-          outcomein: "$_id.outcomein.outcomein_name",
-          year: "$_id.year(date)",
-          month: "$_id.month(date)",
-          paybill: "$SUM(total)"
-        }
-      },
-      {
         $match: {
           $and: [
             {
@@ -265,6 +221,46 @@ module.exports = {
               }
             }
           ]
+        }
+      },
+      {
+        $lookup: {
+          from: "outcomeins",
+          localField: "outcomein",
+          foreignField: "_id",
+          as: "outcomein"
+        }
+      },
+      {
+        $unwind: "$outcomein"
+      },
+
+      {
+        $group: {
+          _id: {
+            "month(date)": {
+              $month: "$date"
+            },
+            "year(date)": {
+              $year: "$date"
+            },
+            "dayOfMonth(date)": {
+              $dayOfMonth: "$date"
+            },
+            outcomein: "$outcomein"
+          },
+          "SUM(total)": {
+            $sum: "$total"
+          }
+        }
+      },
+      {
+        $project: {
+          outcomein: "$_id.outcomein",
+          year: "$_id.year(date)",
+          month: "$_id.month(date)",
+          dayOfMont: "$_id.dayOfMonth(date)",
+          paybill: "$SUM(total)"
         }
       }
     ]).then(outcomes => res.json(outcomes));
