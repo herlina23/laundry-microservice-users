@@ -201,13 +201,13 @@ module.exports = {
   },
   keluarOutcome: (req, res) => {
     let { dateIn, dateOut } = req.query;
-    dateIn = String(dateIn);
-    dateOut = String(dateOut);
 
     dateIn = new Date(dateIn);
     dateOut = new Date(dateOut);
     dateOut.setDate(dateOut.getDate() + 1);
     console.log(req.query);
+    console.log(dateIn);
+    console.log(dateOut);
     Outcome.aggregate([
       {
         $lookup: {
@@ -255,12 +255,12 @@ module.exports = {
         $match: {
           $and: [
             {
-              create_date: {
+              date: {
                 $gte: dateIn
               }
             },
             {
-              create_date: {
+              date: {
                 $lte: dateOut
               }
             }

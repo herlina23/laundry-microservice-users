@@ -20,6 +20,7 @@ app.use("/api/v1/mreports_item", require("./routes/mreports_item"));
 app.use("/api/v1/dreports", require("./routes/dreports"));
 app.use("/api/v1/satuans", require("./routes/satuans"));
 app.use("/api/v1/struks", require("./routes/struks"));
+app.use("/api/v1/dreports_new", require("./routes/dreports_new"));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, console.log(`Server started on Port ${PORT}`));

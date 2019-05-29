@@ -10,9 +10,9 @@ const Transaction = require("../models/Transaction");
 module.exports = {
   index: (req, res) => {
     let { dateIn, dateOut } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     dateIn = new Date(dateIn);
-    console.log(dateIn);
+    // console.log(dateIn);
     dateOut = new Date(dateOut);
     dateOut.setDate(dateOut.getDate() + 1);
     let responseObject = {
