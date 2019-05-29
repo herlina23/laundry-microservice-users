@@ -62,12 +62,11 @@ module.exports = {
           totalPay: "$SUM(grandTotal)"
         }
       }
-    ]);
+    ]).then(itemins => res.json(itemins));
     // .then(transactions => {
     //   responseObject.pemasukan = transactions[0].totalPay;
     //   return res.json(responseObject);
     // });
-    then(itemins => res.json(itemins));
   },
   keluarItem: (req, res) => {
     let { dateIn, dateOut } = req.query;
