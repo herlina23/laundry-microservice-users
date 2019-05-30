@@ -36,7 +36,8 @@ module.exports = {
           },
           "SUM(grandTotal)": {
             $sum: "$grandTotal"
-          }
+          },
+          count: { $sum: 1 }
         }
       },
       {
