@@ -111,6 +111,7 @@ module.exports = {
       }
     ]).then(itemins => res.json(itemins));
   },
+
   keluarSalary: (req, res) => {
     let { m, y } = req.query;
     m = parseInt(m);
@@ -164,6 +165,7 @@ module.exports = {
       }
     ]).then(salaries => res.json(salaries));
   },
+
   keluarOutcome: (req, res) => {
     let { m, y } = req.query;
     m = parseInt(m);
