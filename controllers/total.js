@@ -13,7 +13,7 @@ module.exports = {
   totalBayar: (req, res) => {
     let { i } = req.query;
     //console.log(req.query);
-    
+
     Detail.aggregate([
       {
         $lookup: {
@@ -56,6 +56,7 @@ module.exports = {
           transaction: "$transaction.invoice",
           qty: "$qty",
           tarif: "$service.tarif",
+          unit: "$service.unit",
           price: {
             $multiply: ["$qty", "$service.tarif"]
           }
