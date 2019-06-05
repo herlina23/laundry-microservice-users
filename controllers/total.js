@@ -6,13 +6,14 @@ const Itemout = require("../models/Itemout");
 const Outcome = require("../models/Outcome");
 const Outcomein = require("../models/Outcomein");
 const Transaction = require("../models/Transaction");
+const Detail = require("../models/Detail");
 const axios = require("axios");
 
 module.exports = {
   totalBayar: (req, res) => {
     let { i } = req.query;
-    // m = parseInt(m);
-    // y = parseInt(y);
+    //console.log(req.query);
+    
     Detail.aggregate([
       {
         $lookup: {
