@@ -16,7 +16,6 @@ module.exports = {
 
     let responseObject = {
       pemasukan: 0,
-
       pengeluaran: {
         salaries: [],
         items: [],

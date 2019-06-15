@@ -9,6 +9,7 @@ const Transaction = require("../models/Transaction");
 
 module.exports = {
   index: (req, res) => {
+    // let dateNow = new Date();
     let { dateIn, dateOut } = req.query;
     dateIn = new Date(dateIn);
     dateOut = new Date(dateOut);
@@ -16,7 +17,6 @@ module.exports = {
 
     let responseObject = {
       pemasukan: 0,
-
       pengeluaran: {
         salaries: [],
         items: [],
@@ -81,12 +81,12 @@ module.exports = {
             $match: {
               $and: [
                 {
-                  dateIn: {
+                  create_date: {
                     $gte: dateIn
                   }
                 },
                 {
-                  dateIn: {
+                  create_date: {
                     $lte: dateOut
                   }
                 }
@@ -127,12 +127,12 @@ module.exports = {
             $match: {
               $and: [
                 {
-                  dateIn: {
+                  create_date: {
                     $gte: dateIn
                   }
                 },
                 {
-                  dateIn: {
+                  create_date: {
                     $lte: dateOut
                   }
                 }
@@ -170,12 +170,12 @@ module.exports = {
             $match: {
               $and: [
                 {
-                  dateIn: {
+                  date: {
                     $gte: dateIn
                   }
                 },
                 {
-                  dateIn: {
+                  date: {
                     $lte: dateOut
                   }
                 }
