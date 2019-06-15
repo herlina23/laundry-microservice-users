@@ -19,6 +19,7 @@ app.use("/api/v1/mreports", require("./routes/mreports"));
 app.use("/api/v1/mreports3", require("./routes/mreports3"));
 app.use("/api/v1/mreports_item", require("./routes/mreports_item"));
 app.use("/api/v1/dreports", require("./routes/dreports"));
+app.use("/api/v1/dreports3", require("./routes/dreports3"));
 app.use("/api/v1/satuans", require("./routes/satuans"));
 app.use("/api/v1/struks", require("./routes/struks"));
 app.use("/api/v1/dreports_new", require("./routes/dreports_new"));
