@@ -59,7 +59,14 @@ module.exports = {
           unit: "$service.unit",
           price: {
             $multiply: ["$qty", "$service.tarif"]
-          }
+          },
+          update: "$updatedAt",
+          year: { $year: "$updatedAt" },
+          month: { $month: "$updatedAt" },
+          day: { $dayOfMonth: "$updatedAt" },
+          hour_ori: { $hour: "$updatedAt" },
+          minute: { $minute: "$updatedAt" },
+          hour: { $hour: { $add: ["$updatedAt", 7 * 60 * 60000] } }
         }
       },
       {
