@@ -2,9 +2,9 @@ const express = require("express");
 const verifyToken = require("../middlewares/verifyToken");
 const router = express.Router();
 
-const { index } = require("../controllers/trans");
+const { index } = require("../controllers/transact");
 
-router.get("/trans", index);
+router.get("/transaksi", index);
 
 router.use(verifyToken);
 
