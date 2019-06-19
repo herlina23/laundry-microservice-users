@@ -58,6 +58,9 @@ module.exports = {
           member: "$member.member_name",
           user: "$user.name",
           status: "$status.status_name",
+          phone: "$member.phone",
+          address: "$member.address",
+
           d1: "$dateIn",
           d2: "$dateOut",
 
